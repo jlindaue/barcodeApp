@@ -1,0 +1,29 @@
+{
+  "name": "barcodeapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "npm run start:dev",
+    "start:prod": "cd client && npm run build && cd ../server && npm run start",
+    "start:dev": "concurrently \"npm run server\" \"npm run client\" -k",
+    "client": "cd client && npm run start",
+    "server": "cd server && npm run dev",
+    "install": "cd client && npm install && cd ../server && npm install",
+    "build": "cd client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlindaue/barcodeApp.git"
+  },
+  "author": "Jan Lindauer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jlindaue/barcodeApp/issues"
+  },
+  "homepage": "https://github.com/jlindaue/barcodeApp#readme",
+  "devDependencies": {
+    "concurrently": "^7.5.0",
+    "json-server": "^0.17.0"
+  }
+}

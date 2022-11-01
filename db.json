@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "id": "0135354",
+      "productName": "Mozarella Galbani", 
+      "category": "Syry", 
+      "barcode": "456123154989", 
+      "parents": ["Mozarella"], 
+      "costs":{
+          "Kaufland": 23.9,
+          "Tesco": 27.90,
+          "Globus": 31.90
+      }
+    }  
+  ],
+  "categories": ["Syry", "Sunky", "Tofu"],
+  "productGroups": ["Mozarella", "Slanina", "Okurka"]
+}
