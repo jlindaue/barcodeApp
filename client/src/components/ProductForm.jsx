@@ -1,6 +1,7 @@
 import AutocompletedForm from "./AutocompletedForm";
 import { useState } from "react";
 import { BACKEND_URL } from '../config';
+import { FaTimes } from 'react-icons/fa';
 
 const shops = ['Tesco', "Kaufland", "Globus"]
 
@@ -17,6 +18,13 @@ const initialFormState = {
     }
 }
 
+function copyProduct(product){
+    let copy = {...product};
+    copy.parents = [...product.parents]
+    copy.costs = {...product.costs}
+    return copy;
+}
+
 
 
 
@@ -25,6 +33,8 @@ export default function ProductForm(){
     const [selectedProduct, setSelectedProduct] = useState([initialFormState]);
     const [selectedCategory, setSelectedCategory] = useState([]);
 
+    
+
     function setFormState(newState){
         console.log(newState)
         for (const shop of shops){
@@ -32,38 +42,48 @@ export default function ProductForm(){
         }
         document.getElementById("iBarcode").value = newState.barcode;
         setFormStateRaw(newState);
+        setSelectedCategory([newState.category])
+        setSelectedProduct([newState.name])
     }
 
     function onEnteredProduct(product){
-        let newState = {...formState};
+        let newState = copyProduct(formState);
         newState.name = product.name;
         if (!product.customOption){
-            newState = {...product};
+            newState = copyProduct(product);
             setSelectedCategory([product.category]);
         }
         setFormState(newState);
     }
     
     function onEnteredCategory(category){
-        let newState = {...formState};
+        let newState = copyProduct(formState);
         newState.category = category.name;
         setFormState(newState);
     }
     
     function onEnteredParent(parent){
-        let newState = {...formState};
+        let newState = copyProduct(formState);
         newState.parents.push(parent);
         setFormState(newState);
     }
 
+    function onRemovedParent(parent){
+        let newState = copyProduct(formState);
+        console.log("Delete: ", parent)
+        console.log("Orig: ", newState.parents)
+        newState.parents = newState.parents.filter(p=>p!==parent);
+        setFormState(newState);
+    }
+
     function onEnteredPrice(shop, price){
-        let newState = {...formState};
+        let newState = copyProduct(formState);
         newState.costs[shop] = price;
         setFormState(newState);
     }
 
     function onEnteredBarcode(barcode){
-        let newState = {...formState};
+        let newState = copyProduct(formState);
         newState.barcode = barcode;
         setFormState(newState);
     }
@@ -72,7 +92,11 @@ export default function ProductForm(){
         e.preventDefault();
         if (formState.name === "") return;
         const body = JSON.stringify(formState);
-        fetch(BACKEND_URL+'/products', {method: 'POST', body: body}).then((res)=>{
+        fetch(BACKEND_URL+'/products', {
+            method: 'POST', 
+            body: body, 
+            headers:{'Content-Type': 'application/json'}
+        }).then((res)=>{
             if (res.status === 200){
                 setFormState(initialFormState);
             }
@@ -92,41 +116,48 @@ export default function ProductForm(){
                 <button className="btn btn-primary btn-lg" id='useBarcodeBtn'>Use</button>
             </div>
 
-            <AutocompletedForm source="products" placeholder="Produkt" onEnter={onEnteredProduct} selected={selectedProduct} setSelected={setSelectedProduct}/>
-            <AutocompletedForm source="categories" placeholder="Kategorie" onEnter={onEnteredCategory} selected={selectedCategory} setSelected={setSelectedCategory}/>
-            <input type="text" className="form-control my-1" placeholder="Carovy kod" id="iBarcode" onChange={e => onEnteredBarcode(e.target.value)}/>
-
+            <div className="container">
+                <div className="row align-items-center">
+                    <div className="col-lg-1 col-md-2 col-3">Produkt:</div>
+                    <div className="col">
+                        <AutocompletedForm source="products" placeholder="Produkt" onEnter={onEnteredProduct} selected={selectedProduct} setSelected={setSelectedProduct}/>
+                    </div>
+                </div>
+                <div className="row align-items-center">
+                    <div className="col-lg-1 col-md-2 col-3">Kategorie:</div>
+                    <div className="col">
+                        <AutocompletedForm source="categories" placeholder="Kategorie" onEnter={onEnteredCategory} selected={selectedCategory} setSelected={setSelectedCategory}/>
+                    </div>
+                </div>
+                <div className="row align-items-center">
+                    <div className="col-lg-1 col-md-2 col-3">Barcode:</div>
+                    <div className="col">
+                        <input type="text" className="form-control my-1" placeholder="Carovy kod" id="iBarcode" onChange={e => onEnteredBarcode(e.target.value)}/>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <h5 className="h5 mt-3">Ceny:</h5>
             {shops.map(shop=>(
                 <div className="d-flex justify-content-evenly align-items-center" key={shop}>
                     <img src={`./icons/${shop}.png`} alt={shop} className="me-2 img-fluid" style={{maxWidth:'40px', maxHeight:'40px'}}/>
                     <input type="number" className="form-control my-1" placeholder={shop} id={"cost"+shop} onChange={e => onEnteredPrice(shop, e.target.value)}/>
+                    <div className="mx-2">Kc</div>
+                </div>
+            ))}            
+
+            
+            <h5 className="mt-3 h5">Nadrazene produkty:</h5>
+            <AutocompletedForm source="productGroups" placeholder="Novy nadrazeny produkt" onEnter={onEnteredParent}/>
+            {formState.parents.map(parent=>(
+                <div className="card" key={'parent'+parent.name}>
+                    <div className="card-body d-flex justify-content-between align-items-center">
+                        <div className="card-text">{parent.name}</div>
+                        <FaTimes style={{ color: 'red', cursor: 'pointer'}} onClick={()=>onRemovedParent(parent)}></FaTimes>
+                    </div>
                 </div>
             ))}
-
-            {/*TODO - fix*/}
-            {formState.parents.map(parent=>{
-                <div class="card">
-                    <div class="card-body">
-                        {parent.name}
-                    </div>
-                </div>
-            })}
-            
-
-            {/*<div className="d-flex justify-content-evenly align-self-stretch" style={{maxHeight:'50px'}}>
-                {shops.map(shop=>(
-                    <div className="thumbnail" key={shop}>
-                        <input type="checkbox" className="btn-check" autoComplete="off" id={shop} />
-                        <label className="btn btn btn-outline-success d-flex justify-content-center flex-column" htmlFor={shop} style={{height:'50px'}}>
-                            <img src={`./icons/${shop}.png`} alt={shop} className="img-fluid" style={{maxWidth:'50px'}}/>
-                        </label>
-                    </div>
-                ))}
-            </div>*/}
-
-            <AutocompletedForm source="productGroups" placeholder="Nadrazeny produkt" onEnter={onEnteredParent}/>
-            
-            
             
             
 

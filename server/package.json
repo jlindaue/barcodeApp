@@ -12,10 +12,11 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "mongoose": "^6.7.0",
     "morgan": "~1.9.1",
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.25.3",
+    "sequelize": "^6.25.7",
     "sequelize-auto": "^0.8.8"
   }
 }

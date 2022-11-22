@@ -1,70 +1,84 @@
 const express = require('express');
 const router = express.Router();
+const models = require('../database/models.js');
+const Sequelize = require('sequelize');
 
-let products =  [{
-    "id": "0135354",
-    "name": "Mozzarella Galbani", 
-    "category": "Syry", 
-    "barcode": "456123154989", 
-    "parents": ["Mozzarella"], 
-    "costs":{
-        "Kaufland": 23.9,
-        "Tesco": 27.90,
-        "Globus": 31.90
-    }},{
-    "id": "0135754",
-    "name": "Clever Mozzarella", 
-    "category": "Syry", 
-    "barcode": "556123154989", 
-    "parents": ["Mozarella"], 
-    "costs":{
-        "Tesco": 23.9,
-    }    
-}];
 
-let categories =  ["Syry", "Sunky", "Tofu"];
-let productGroups = ["Mozarella", "Slanina", "Okurka"]
 
-/*
-router.get('/products/:product', (req,res)=>{
+router.get('/products/:product', async (req,res)=>{
     console.log(req.params.product);
+    const product = await models.product.findByPk(id);
+	if (product) {
+		res.status(200).json(product);
+	} else {
+		res.status(404).send('404 - Not found');
+	}
 })
-router.get('/products', (req,res)=>{
+
+
+
+router.get('/products', async (req,res)=>{
     console.log(req.query);
+    let results;
 
-    console.log(products)
     if (req?.query?.q){
-        products = products.filter(product => product.name.toLowerCase().startsWith(req.query.q.toLowerCase()))
+        const query = req?.query?.q;
+        //results = results.filter(product => product.name.toLowerCase().startsWith(req.query.q.toLowerCase()))
+        results = await models.concrete_product.findAll({
+            limit: 5,
+            //attributes: [[Sequelize.col('"id_product"."name"'), "name"], 'id'],
+            include: [{ 
+                model: models.product, 
+                as: 'product', 
+                attributes: ["name"],
+                where: { name: { [Sequelize.Op.iLike]: query + '%' }},
+                include: [{
+                    model: models.product_group, 
+                    as: 'group',
+                    include: [{
+                        model: models.product, 
+                        as: 'product',
+                        attributes: ['name']
+                    }],
+                    attributes: ['id']
+                }]
+            }],
+            //    where: { name: { [Sequelize.Op.iLike]: query + '%' }}}],
+            //where: { "$product.name$": { [Sequelize.Op.iLike]: query + '%' }},
+            //order: '"volume" DESC'
+          });
+    }else{
+        results = await models.concrete_product.findAll({
+            include: [{ model: models.product, as: 'concreteProduct' }],
+            limit: 5
+        });
     }
-    products = products.slice(0,5);
 
-    console.log(products)
-    res.status(200).json(products);
-})*/
+    console.log(results)
+
+    results = results.map(r => {return {
+        id: r.id, 
+        name: r.product.name, 
+        groups: r.product.group.map(group => {return {
+            id: group.id,
+            name: group.product.name
+        }})
+    }});
+
+    for (const result of results){
+        console.log(result.groups);
+    }
+    console.log(results)
+    res.status(200).json(results);
+})
 
 
 //TODO post
-router.post('/products', (req,res)=>{
-    console.log("Body:");
+router.post('/products', async (req,res)=>{
     console.log(req.body);
-    res.status(200).end();
+    await models.concrete_product.create(req.body);
+    res.status(201).end();
 })
-
-//TODO
-router.get('/categories', (req,res)=>{
-    res.status(200).json(categories);
-})
-router.get('/productGroups', (req,res)=>{
-    res.status(200).json(productGroups);
-})
-router.get('/products', (req,res)=>{
-    res.status(200).json(products);
-})
-
-
-
-
-
 
 
 module.exports = router;
