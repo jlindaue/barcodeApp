@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     state: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(10),
       allowNull: false
     },
     timestamp: {

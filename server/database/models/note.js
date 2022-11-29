@@ -7,6 +7,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
+    amount: {
+      type: DataTypes.DECIMAL,
+      allowNull: false
+    },
+    amount_unit: {
+      type: DataTypes.STRING(4),
+      allowNull: false
+    },
     state: {
       type: DataTypes.STRING(4),
       allowNull: false

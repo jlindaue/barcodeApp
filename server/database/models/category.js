@@ -1,23 +1,24 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('product_group', {
+  return sequelize.define('category', {
     id: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'product',
-        key: 'id'
-      }
+      primaryKey: true
+    },
+    name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'product_group',
+    tableName: 'category',
     schema: 'public',
     timestamps: false,
     indexes: [
       {
-        name: "product_group_pkey",
+        name: "category_pkey",
         unique: true,
         fields: [
           { name: "id" },

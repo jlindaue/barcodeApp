@@ -2,18 +2,56 @@ const express = require('express');
 const router = express.Router();
 const models = require('../database/models.js');
 const Sequelize = require('sequelize');
+const {addConcreteProduct} = require('../dao/products.js')
 
 
 
-router.get('/products/:product', async (req,res)=>{
+/*router.get('/products/:product', async (req,res)=>{
     console.log(req.params.product);
-    const product = await models.product.findByPk(id);
+    const product = await models.product.findByPk(id, {
+        attributes: ["id", "name", "barcode"],
+        where: { name: { [Sequelize.Op.iLike]: query + '%' }},
+        include: [{
+            model: models.product, 
+            as: 'groups',
+            attributes: ['id', 'name']
+        },{
+            model: models.category, 
+            as: 'category',
+            attributes: ['id', 'name']
+        },{
+            model: models.category, 
+            as: 'subcategory',
+            attributes: ['id', 'name']
+        },{ 
+            model: models.offer, 
+            as: 'offers', 
+            attributes: ["cost"],
+            include: [{
+                model: models.shop, 
+                as: 'shop',
+                attributes: ['name']
+            }],
+        }]
+    });
 	if (product) {
+        const result = {
+            id: product.id, 
+            name: product.name, 
+            barcode: product.barcode,
+            parents: r.groups.map(group => {return {
+                id: group.id,
+                name: group.name
+            }}),
+            category: r.category.name,
+            subcategory: r.subcategory ? r.subcategory.name : null,
+            costs: r.offers.reduce((obj, offer) => ({ ...obj, [offer.shop.name]: offer.cost}), {})
+        }
 		res.status(200).json(product);
 	} else {
 		res.status(404).send('404 - Not found');
 	}
-})
+})*/
 
 
 
@@ -24,25 +62,25 @@ router.get('/products', async (req,res)=>{
     if (req?.query?.q){
         const query = req?.query?.q;
         //results = results.filter(product => product.name.toLowerCase().startsWith(req.query.q.toLowerCase()))
-        results = await models.concrete_product.findAll({
+        results = await models.product.findAll({
             limit: 5,
             //attributes: [[Sequelize.col('"id_product"."name"'), "name"], 'id'],
-            include: [{ 
+            model: models.product, 
+            attributes: ["id", "name", "barcode"],
+            where: { name: { [Sequelize.Op.iLike]: query.toLowerCase() + '%' }},
+            include: [{
                 model: models.product, 
-                as: 'product', 
-                attributes: ["name"],
-                where: { name: { [Sequelize.Op.iLike]: query + '%' }},
-                include: [{
-                    model: models.product_group, 
-                    as: 'group',
-                    include: [{
-                        model: models.product, 
-                        as: 'product',
-                        attributes: ['name']
-                    }],
-                    attributes: ['id']
-                }]
+                as: 'groups',
+                attributes: ['id', 'name']
             },{
+                model: models.category, 
+                as: 'category',
+                attributes: ['id', 'name']
+            },{
+                model: models.category, 
+                as: 'subcategory',
+                attributes: ['id', 'name']
+            },{ 
                 model: models.offer, 
                 as: 'offers', 
                 attributes: ["cost"],
@@ -57,8 +95,7 @@ router.get('/products', async (req,res)=>{
             //order: '"volume" DESC'
           });
     }else{
-        results = await models.concrete_product.findAll({
-            include: [{ model: models.product, as: 'concreteProduct' }],
+        results = await models.product.findAll({
             limit: 5
         });
     }
@@ -67,11 +104,14 @@ router.get('/products', async (req,res)=>{
 
     results = results.map(r => {return {
         id: r.id, 
-        name: r.product.name, 
-        parents: r.product.group.map(group => {return {
+        name: r.name, 
+        barcode: r.barcode,
+        parents: r.groups.map(group => {return {
             id: group.id,
-            name: group.product.name
+            name: group.name
         }}),
+        category: r.category.name,
+        subcategory: r.subcategory ? r.subcategory.name : null,
         costs: r.offers.reduce((obj, offer) => ({ ...obj, [offer.shop.name]: offer.cost}), {})
     }});
 
@@ -80,10 +120,9 @@ router.get('/products', async (req,res)=>{
 })
 
 
-//TODO post
 router.post('/products', async (req,res)=>{
     console.log(req.body);
-    await models.concrete_product.create(req.body);
+    await addConcreteProduct(req.body)
     res.status(201).end();
 })
 

@@ -1,10 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('offer', {
-    type: {
-      type: DataTypes.STRING(1),
-      allowNull: false
-    },
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -19,15 +15,39 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: true
     },
+    offer_end: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    offer_start: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    percentage_sale: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
+    type: {
+      type: DataTypes.STRING(1),
+      allowNull: false
+    },
     valid: {
       type: DataTypes.BOOLEAN,
       allowNull: false
+    },
+    membership_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'membership',
+        key: 'id'
+      }
     },
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'concrete_product',
+        model: 'product',
         key: 'id'
       }
     },

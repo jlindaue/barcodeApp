@@ -1,5 +1,4 @@
 var DataTypes = require("sequelize").DataTypes;
-var _category = require("./category");
 var _client = require("./client");
 var _client_memberships = require("./client_memberships");
 var _client_shops = require("./client_shops");
@@ -15,7 +14,6 @@ var _shopping_list_item = require("./shopping_list_item");
 var _synonym = require("./synonym");
 
 function initModels(sequelize) {
-  var category = _category(sequelize, DataTypes);
   var client = _client(sequelize, DataTypes);
   var client_memberships = _client_memberships(sequelize, DataTypes);
   var client_shops = _client_shops(sequelize, DataTypes);
@@ -30,12 +28,6 @@ function initModels(sequelize) {
   var shopping_list_item = _shopping_list_item(sequelize, DataTypes);
   var synonym = _synonym(sequelize, DataTypes);
 
-  product.belongsTo(category, { as: "category", foreignKey: "category_id"});
-  category.hasMany(product, { as: "products", foreignKey: "category_id"});
-  product.belongsTo(category, { as: "subcategory", foreignKey: "subcategory_id"});
-  category.hasMany(product, { as: "subcategory_products", foreignKey: "subcategory_id"});
-  product.belongsTo(category, { as: "subsubcategory", foreignKey: "subsubcategory_id"});
-  category.hasMany(product, { as: "subsubcategory_products", foreignKey: "subsubcategory_id"});
   client_memberships.belongsTo(client, { as: "client", foreignKey: "client_id"});
   client.hasMany(client_memberships, { as: "client_memberships", foreignKey: "client_id"});
   client_shops.belongsTo(client, { as: "client", foreignKey: "client_id"});
@@ -69,9 +61,7 @@ function initModels(sequelize) {
   product.belongsToMany(product, { as: "subproducts", through: "products_relations", foreignKey: "category_id", otherKey: "product_id"});
   product.belongsToMany(product, { as: "groups", through: "products_relations", foreignKey: "product_id", otherKey: "category_id"});
 
-
   return {
-    category,
     client,
     client_memberships,
     client_shops,

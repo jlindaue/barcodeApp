@@ -7,6 +7,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
+    amount: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
     confirmed: {
       type: DataTypes.BOOLEAN,
       allowNull: false
