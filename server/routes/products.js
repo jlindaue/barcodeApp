@@ -42,6 +42,15 @@ router.get('/products', async (req,res)=>{
                     }],
                     attributes: ['id']
                 }]
+            },{
+                model: models.offer, 
+                as: 'offers', 
+                attributes: ["cost"],
+                include: [{
+                    model: models.shop, 
+                    as: 'shop',
+                    attributes: ['name']
+                }],
             }],
             //    where: { name: { [Sequelize.Op.iLike]: query + '%' }}}],
             //where: { "$product.name$": { [Sequelize.Op.iLike]: query + '%' }},
@@ -59,16 +68,14 @@ router.get('/products', async (req,res)=>{
     results = results.map(r => {return {
         id: r.id, 
         name: r.product.name, 
-        groups: r.product.group.map(group => {return {
+        parents: r.product.group.map(group => {return {
             id: group.id,
             name: group.product.name
-        }})
+        }}),
+        costs: r.offers.reduce((obj, offer) => ({ ...obj, [offer.shop.name]: offer.cost}), {})
     }});
 
-    for (const result of results){
-        console.log(result.groups);
-    }
-    console.log(results)
+    console.log(JSON.stringify(results));
     res.status(200).json(results);
 })
 
