@@ -43,23 +43,19 @@ async function addConcreteProduct(productToAdd){
         product.barcode = productToAdd.barcode;
         product.package_size = productToAdd.package_size;
         product.package_size_unit = productToAdd.package_size_unit;
-        product.category_id = category.id;
         await product.save();
+        await product.setCategory(category);
     }
 
     console.log(product);
-    const currentGroups =  await product.getGroups();
-    const currentGroupIds = currentGroups.map(group => group.id);
-    console.log(currentGroupIds);
+    await product.setGroups([]);
 
     for (const groupToAdd of productToAdd.parents){
-        console.log(groupToAdd);
+        //console.log(groupToAdd);
         groupToAdd.category_id = category.id;
         let group = await findOrCreateGroup(groupToAdd)
-        console.log(group.id);
-        if (!currentGroupIds.includes(group.id)){
-            await product.addGroups(group);
-        }
+        //console.log(group.id);
+        await product.addGroup(group);
     }
 
     const currentOffers = await product.getOffers({include: [{
@@ -68,9 +64,9 @@ async function addConcreteProduct(productToAdd){
         attributes: ['id', 'name']
     }]});
 
-    console.log(currentOffers);
+    //console.log(currentOffers);
     for (const shopName in productToAdd.costs){
-        console.log(shopName);
+        //console.log(shopName);
         const [shop, shopCreated] = await models.shop.findOrCreate({
             where: {name: shopName}
         });

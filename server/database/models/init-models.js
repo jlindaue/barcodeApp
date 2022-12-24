@@ -30,6 +30,8 @@ function initModels(sequelize) {
   var shopping_list_item = _shopping_list_item(sequelize, DataTypes);
   var synonym = _synonym(sequelize, DataTypes);
 
+  product.belongsToMany(product, { as: 'product_id_products', through: products_relations, foreignKey: "category_id", otherKey: "product_id" });
+  product.belongsToMany(product, { as: 'category_id_products', through: products_relations, foreignKey: "product_id", otherKey: "category_id" });
   product.belongsTo(category, { as: "category", foreignKey: "category_id"});
   category.hasMany(product, { as: "products", foreignKey: "category_id"});
   product.belongsTo(category, { as: "subcategory", foreignKey: "subcategory_id"});

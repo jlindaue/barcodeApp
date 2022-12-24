@@ -15,6 +15,8 @@ const products =  [{
     "package_size_unit": "G",
     "barcode": "456123154989", 
     "category": "Syry",
+    "subcategory": "Mozzarella",
+    "subsubcategory": "",
     "parents": [{name: "Mozzarella"}], 
     "costs":{
         "Kaufland": 23.9,
@@ -28,6 +30,8 @@ const products =  [{
     "package_size_unit": "G",
     "barcode": "556123154989",
     "category": "Syry", 
+    "subcategory": "Mozzarella",
+    "subsubcategory": "",
     "parents": [{name: "Mozarella"}], 
     "costs":{
         "Tesco": 23.9,

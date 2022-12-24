@@ -2,6 +2,7 @@ import AutocompletedForm from "./AutocompletedForm";
 import { useState } from "react";
 import { BACKEND_URL } from '../config';
 import { FaTimes } from 'react-icons/fa';
+import Scanner from "./Scanner";
 
 const shops = ['Tesco', "Kaufland", "Globus"]
 
@@ -47,6 +48,7 @@ export default function ProductForm(){
     }
 
     function onEnteredProduct(product){
+        console.log(product);
         let newState = copyProduct(formState);
         newState.name = product.name;
         if (!product.customOption){
@@ -111,10 +113,7 @@ export default function ProductForm(){
     
     return (
         <form className="container pt-3">
-            <div className="input-group">
-                <input type="text" className="form-control" placeholder="Carovy kod"/>
-                <button className="btn btn-primary btn-lg" id='useBarcodeBtn'>Use</button>
-            </div>
+            <Scanner onEnteredBarcode={onEnteredBarcode} onEnteredProduct={onEnteredProduct} formBarcode={formState.barcode}/>
 
             <div className="container">
                 <div className="row align-items-center">
@@ -132,7 +131,7 @@ export default function ProductForm(){
                 <div className="row align-items-center">
                     <div className="col-lg-1 col-md-2 col-3">Barcode:</div>
                     <div className="col">
-                        <input type="text" className="form-control my-1" placeholder="Carovy kod" id="iBarcode" onChange={e => onEnteredBarcode(e.target.value)}/>
+                        <input type="text" className="form-control my-1" placeholder="Carovy kod" id="iBarcode" onChange={e => onEnteredBarcode(e.target.value)} value={formState.barcode}/>
                     </div>
                 </div>
             </div>

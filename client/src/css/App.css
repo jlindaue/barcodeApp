@@ -1,0 +1,14 @@
+#scannerView {
+    position: relative;
+}
+
+#scannerView > canvas, #scannerView > video {
+    max-width: 100%;
+    width: 100%;
+}
+
+canvas.drawing, canvas.drawingBuffer {
+    position: absolute;
+    left: 0;
+    top: 0;
+}

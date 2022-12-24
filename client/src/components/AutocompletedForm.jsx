@@ -33,6 +33,7 @@ export default function AutocompletedForm(props){
       allowNew={true}
       options={options}
       selected={props.selected ? props.selected : []}
+      useCache={false}
     />
   );
 } 

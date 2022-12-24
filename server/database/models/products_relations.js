@@ -4,6 +4,8 @@ module.exports = function(sequelize, DataTypes) {
     category_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      onDelete: 'CASCADE',
+      primaryKey: true,
       references: {
         model: 'product',
         key: 'id'
@@ -12,6 +14,8 @@ module.exports = function(sequelize, DataTypes) {
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      onDelete: 'CASCADE',
+      primaryKey: true,
       references: {
         model: 'product',
         key: 'id'
@@ -21,6 +25,16 @@ module.exports = function(sequelize, DataTypes) {
     sequelize,
     tableName: 'products_relations',
     schema: 'public',
-    timestamps: false
+    timestamps: false,
+    indexes: [
+      {
+        name: "products_relations_pkey",
+        unique: true,
+        fields: [
+          { name: "category_id" },
+          { name: "product_id" },
+        ]
+      },
+    ]
   });
 };
