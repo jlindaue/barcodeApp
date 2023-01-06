@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     client_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'client',
         key: 'id'

@@ -15,9 +15,13 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false
     },
+    total_cost: {
+      type: DataTypes.DECIMAL,
+      allowNull: false
+    },
     client_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'client',
         key: 'id'

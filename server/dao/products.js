@@ -8,13 +8,16 @@ async function findOrCreateGroup(group){
         defaults: {
             base_amount: group.base_amount,
             base_amount_unit: group.base_amount_unit,
-            category_id: group.category_id
+            category_id: group.category_id,
+            subcategory_id: group.subcategory_id,
+            subsubcategory_id: group.subsubcategory_id
         }
     });
     return product;
 }
 
 async function findOrCreateCategory(name){
+    if (name === "" || name === undefined) return null;
     const [category, created] = await models.category.findOrCreate({
         where: {name: name}
     });
@@ -25,9 +28,13 @@ async function addConcreteProduct(productToAdd){
     console.log(productToAdd);
     productToAdd.name = productToAdd?.name?.toLowerCase();
     productToAdd.category = productToAdd?.category?.toLowerCase();
+    productToAdd.subcategory = productToAdd?.subcategory?.toLowerCase();
+    productToAdd.subsubcategory = productToAdd?.subsubcategory?.toLowerCase();
     productToAdd.parents.forEach(parent => parent.name = parent?.name?.toLowerCase())
     console.log(productToAdd);
     let category = await findOrCreateCategory(productToAdd.category)
+    let subcategory = await findOrCreateCategory(productToAdd.subcategory)
+    let subsubcategory = await findOrCreateCategory(productToAdd.subsubcategory)
     const [product, productCreated] = await models.product.findOrCreate({
         where: {name: productToAdd.name, type: ProductType.CONCRETE},
         defaults: {
@@ -35,7 +42,9 @@ async function addConcreteProduct(productToAdd){
             barcode: productToAdd.barcode,
             package_size: productToAdd.package_size,
             package_size_unit: productToAdd.package_size_unit,
-            category_id: category.id
+            category_id: category.id,
+            subcategory_id: subcategory.id,
+            subsubcategory_id: subsubcategory.id
         }
     });
     if (!productCreated){
@@ -45,6 +54,8 @@ async function addConcreteProduct(productToAdd){
         product.package_size_unit = productToAdd.package_size_unit;
         await product.save();
         await product.setCategory(category);
+        await product.setSubcategory(subcategory);
+        await product.setSubsubcategory(subsubcategory);
     }
 
     console.log(product);
@@ -53,6 +64,8 @@ async function addConcreteProduct(productToAdd){
     for (const groupToAdd of productToAdd.parents){
         //console.log(groupToAdd);
         groupToAdd.category_id = category.id;
+        groupToAdd.subcategory_id = subcategory.id;
+        groupToAdd.subsubcategory_id = subsubcategory.id;
         let group = await findOrCreateGroup(groupToAdd)
         //console.log(group.id);
         await product.addGroup(group);

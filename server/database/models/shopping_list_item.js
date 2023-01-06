@@ -35,19 +35,19 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(4),
       allowNull: false
     },
+    client_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'client',
+        key: 'id'
+      }
+    },
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'product',
-        key: 'id'
-      }
-    },
-    client_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'client',
         key: 'id'
       }
     }

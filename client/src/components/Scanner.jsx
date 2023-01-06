@@ -8,9 +8,9 @@ function initQuagga(){
         inputStream : {
             name : "Live",
             type : "LiveStream",
-            width: {min: 640},
-            height: {min: 480},
-            aspectRatio: {min: 1, max: 100},
+            width: 800,
+            height: 100,
+            //aspectRatio: {min: 1, max: 1},
             facingMode: "environment", // or user
             target: document.querySelector('#scannerView')
         },
@@ -62,7 +62,9 @@ export default function Scanner(props){
                 const json = await response.json();
                 const product = {
                     name: json.product?.product_name,
-                    category: json.product?.categories.split(", ")[0],
+                    category: json.product?.categories.split(",")[0],
+                    subcategory: json.product?.categories.split(",")[1],
+                    subsubcategory: json.product?.categories.split(",")[2],
                     barcode: barcode,
                     "parents": [], 
                     "costs":{
@@ -78,7 +80,7 @@ export default function Scanner(props){
         }
     }
 
-    setTimeout(() => setBarcode("456666"), 1000);
+    setTimeout(() => setBarcode("3017620422003"), 1000);
 
     async function loadFromDB(e){
         e.preventDefault();

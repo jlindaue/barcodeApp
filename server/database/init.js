@@ -7,6 +7,22 @@ const category = require('./models/category.js');
 const {addConcreteProduct} = require('../dao/products.js')
 
 
+const groups = [
+    {
+        "id": "0135354",
+        "name": "Mozzarella", 
+        "brand": "Galbani",
+        "package_size": 125,
+        "package_size_unit": "G",
+        "barcode": "456123154989", 
+        "category": "Syry",
+        "subcategory": "Mozzarella",
+        "subsubcategory": "",
+        "parents": [], 
+        "costs":{}
+    }
+]
+
 const products =  [{
     "id": "0135354",
     "name": "Mozzarella Galbani", 
@@ -34,7 +50,7 @@ const products =  [{
     "subsubcategory": "",
     "parents": [{name: "Mozarella"}], 
     "costs":{
-        "Tesco": 23.9,
+        "Tesco": 24.9,
     }    
 }];
 
@@ -52,6 +68,10 @@ async function run(){
 
     for (const productToAdd of products){
         addConcreteProduct(productToAdd);
+    }
+
+    for (const productToAdd of products){
+        addPro(productToAdd);
     }
 }
 

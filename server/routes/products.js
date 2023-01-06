@@ -20,6 +20,10 @@ const productSequelizeQuery = {
         model: models.category, 
         as: 'subcategory',
         attributes: ['id', 'name']
+    },{
+        model: models.category, 
+        as: 'subsubcategory',
+        attributes: ['id', 'name']
     },{ 
         model: models.offer, 
         as: 'offers', 
@@ -43,6 +47,7 @@ function productToDTO(r) {
         }}),
         category: r.category.name,
         subcategory: r.subcategory ? r.subcategory.name : null,
+        subsubcategory: r.subsubcategory ? r.subsubcategory.name : null,
         costs: r.offers.reduce((obj, offer) => ({ ...obj, [offer.shop.name]: offer.cost}), {})
     }
 }
@@ -65,7 +70,7 @@ router.get('/product', async (req,res)=>{
         ...productSequelizeQuery,
         where: { barcode: barcode}
     });
-    if (product) {
+    if (result) {
 		res.status(200).json(productToDTO(result));
 	} else {
 		res.status(404).send('404 - Not found');
@@ -78,15 +83,10 @@ router.get('/products', async (req,res)=>{
 
     if (req?.query?.q){
         const query = req?.query?.q;
-        //results = results.filter(product => product.name.toLowerCase().startsWith(req.query.q.toLowerCase()))
         results = await models.product.findAll({
             ...productSequelizeQuery,
             limit: 5,
-            //attributes: [[Sequelize.col('"id_product"."name"'), "name"], 'id'],
             where: { name: { [Sequelize.Op.iLike]: query.toLowerCase() + '%' }},
-            //    where: { name: { [Sequelize.Op.iLike]: query + '%' }}}],
-            //where: { "$product.name$": { [Sequelize.Op.iLike]: query + '%' }},
-            //order: '"volume" DESC'
           });
     }else{
         results = await models.product.findAll({

@@ -4,7 +4,6 @@ module.exports = function(sequelize, DataTypes) {
     category_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      onDelete: 'CASCADE',
       primaryKey: true,
       references: {
         model: 'product',
@@ -14,7 +13,6 @@ module.exports = function(sequelize, DataTypes) {
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      onDelete: 'CASCADE',
       primaryKey: true,
       references: {
         model: 'product',

@@ -10,6 +10,8 @@ const initialFormState = {
     "id": "",
     "name": "", 
     "category": "", 
+    "subcategory": "", 
+    "subsubcategory": "", 
     "barcode": "", 
     "parents": [], 
     "costs":{
@@ -31,10 +33,12 @@ function copyProduct(product){
 
 export default function ProductForm(){
     const [formState, setFormStateRaw] = useState(initialFormState)
+    
+    //Autocomplete states
     const [selectedProduct, setSelectedProduct] = useState([initialFormState]);
     const [selectedCategory, setSelectedCategory] = useState([]);
-
-    
+    const [selectedSubcategory, setSelectedSubcategory] = useState([]);
+    const [selectedSubsubcategory, setSelectedSubsubcategory] = useState([]);
 
     function setFormState(newState){
         console.log(newState)
@@ -44,6 +48,8 @@ export default function ProductForm(){
         document.getElementById("iBarcode").value = newState.barcode;
         setFormStateRaw(newState);
         setSelectedCategory([newState.category])
+        setSelectedSubcategory([newState.subcategory ? newState.subcategory : ""])
+        setSelectedSubsubcategory([newState.subsubcategory ? newState.subsubcategory : ""])
         setSelectedProduct([newState.name])
     }
 
@@ -53,14 +59,12 @@ export default function ProductForm(){
         newState.name = product.name;
         if (!product.customOption){
             newState = copyProduct(product);
-            setSelectedCategory([product.category]);
         }
         setFormState(newState);
     }
-    
-    function onEnteredCategory(category){
+    function onEnteredProperty(property, value){
         let newState = copyProduct(formState);
-        newState.category = category.name;
+        newState[property] = value;
         setFormState(newState);
     }
     
@@ -81,12 +85,6 @@ export default function ProductForm(){
     function onEnteredPrice(shop, price){
         let newState = copyProduct(formState);
         newState.costs[shop] = price;
-        setFormState(newState);
-    }
-
-    function onEnteredBarcode(barcode){
-        let newState = copyProduct(formState);
-        newState.barcode = barcode;
         setFormState(newState);
     }
 
@@ -113,7 +111,7 @@ export default function ProductForm(){
     
     return (
         <form className="container pt-3">
-            <Scanner onEnteredBarcode={onEnteredBarcode} onEnteredProduct={onEnteredProduct} formBarcode={formState.barcode}/>
+            <Scanner onEnteredBarcode={v => onEnteredProperty("barcode", v)} onEnteredProduct={onEnteredProduct} formBarcode={formState.barcode}/>
 
             <div className="container">
                 <div className="row align-items-center">
@@ -125,13 +123,25 @@ export default function ProductForm(){
                 <div className="row align-items-center">
                     <div className="col-lg-1 col-md-2 col-3">Kategorie:</div>
                     <div className="col">
-                        <AutocompletedForm source="categories" placeholder="Kategorie" onEnter={onEnteredCategory} selected={selectedCategory} setSelected={setSelectedCategory}/>
+                        <AutocompletedForm source="categories" placeholder="Kategorie" onEnter={c => onEnteredProperty("category", c.name)} selected={selectedCategory} setSelected={setSelectedCategory}/>
+                    </div>
+                </div>
+                <div className="row align-items-center">
+                    <div className="col-lg-1 col-md-2 col-3">Podkategorie:</div>
+                    <div className="col">
+                        <AutocompletedForm source="categories" placeholder="Podkategorie" onEnter={c => onEnteredProperty("subcategory", c.name)} selected={selectedSubcategory} setSelected={setSelectedSubcategory}/>
+                    </div>
+                </div>
+                <div className="row align-items-center">
+                    <div className="col-lg-1 col-md-2 col-3">Podpodkategorie:</div>
+                    <div className="col">
+                        <AutocompletedForm source="categories" placeholder="Podpodkategorie" onEnter={c => onEnteredProperty("subsubcategory", c.name)} selected={selectedSubsubcategory} setSelected={setSelectedSubsubcategory}/>
                     </div>
                 </div>
                 <div className="row align-items-center">
                     <div className="col-lg-1 col-md-2 col-3">Barcode:</div>
                     <div className="col">
-                        <input type="text" className="form-control my-1" placeholder="Carovy kod" id="iBarcode" onChange={e => onEnteredBarcode(e.target.value)} value={formState.barcode}/>
+                        <input type="text" className="form-control my-1" placeholder="Carovy kod" id="iBarcode" onChange={e => onEnteredProperty("barcode", e.target.value)} value={formState.barcode}/>
                     </div>
                 </div>
             </div>

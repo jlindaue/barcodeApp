@@ -36,6 +36,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(4),
       allowNull: true
     },
+    popularity: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     type: {
       type: DataTypes.STRING(1),
       allowNull: false

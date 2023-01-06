@@ -10,7 +10,7 @@ export default function AutocompletedForm(props){
   return (
     <AsyncTypeahead
       className='my-1'
-      id={`${props.source}Autocomplete`}
+      id={`${props.source}${props.placeholder}Autocomplete`}
       isLoading={isLoading}
       placeholder={props.placeholder}
       labelKey="name"
