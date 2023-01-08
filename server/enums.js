@@ -7,7 +7,7 @@ const Units = {
 }
 
 const ProductType = {
-	CONCRETE: "C",
+	CONCRETE: "P",
 	GROUP: "G"
 }
 

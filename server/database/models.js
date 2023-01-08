@@ -1,7 +1,8 @@
 const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize('shopOptimizer', 'postgres', '1555', {
     host: 'localhost',
-    dialect: 'postgres'
+    dialect: 'postgres',
+    logging: console.log
 });
 
 const initModels = require("./models/init-models");

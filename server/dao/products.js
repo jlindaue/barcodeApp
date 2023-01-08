@@ -4,7 +4,7 @@ const {ProductType} = require('../enums.js');
 
 async function findOrCreateGroup(group){
     const [product, created] = await models.product.findOrCreate({
-        where: {name: group.name, type: ProductType.GROUP},//defaults: {}
+        where: {name: group.name?.toLowerCase(), type: ProductType.GROUP},//defaults: {}
         defaults: {
             base_amount: group.base_amount,
             base_amount_unit: group.base_amount_unit,
@@ -34,7 +34,9 @@ async function addConcreteProduct(productToAdd){
     console.log(productToAdd);
     let category = await findOrCreateCategory(productToAdd.category)
     let subcategory = await findOrCreateCategory(productToAdd.subcategory)
-    let subsubcategory = await findOrCreateCategory(productToAdd.subsubcategory)
+    let subsubcategory = {id: null}
+    if (productToAdd.subsubcategory)
+        subsubcategory = await findOrCreateCategory(productToAdd.subsubcategory)
     const [product, productCreated] = await models.product.findOrCreate({
         where: {name: productToAdd.name, type: ProductType.CONCRETE},
         defaults: {
@@ -55,7 +57,7 @@ async function addConcreteProduct(productToAdd){
         await product.save();
         await product.setCategory(category);
         await product.setSubcategory(subcategory);
-        await product.setSubsubcategory(subsubcategory);
+        if (productToAdd.subsubcategory) await product.setSubsubcategory(subsubcategory);
     }
 
     console.log(product);

@@ -4,17 +4,17 @@ const models = require('../database/models.js');
 const Sequelize = require('sequelize');
 const {Unit, ProductType} = require('../enums.js');
 const category = require('./models/category.js');
-const {addConcreteProduct} = require('../dao/products.js')
+const {addConcreteProduct, findOrCreateGroup} = require('../dao/products.js')
 
 
 const groups = [
     {
-        "id": "0135354",
-        "name": "Mozzarella", 
-        "brand": "Galbani",
-        "package_size": 125,
-        "package_size_unit": "G",
-        "barcode": "456123154989", 
+        "id": "100",
+        "name": "mozzarella", 
+        "brand": "",
+        "package_size": null,
+        "package_size_unit": "",
+        "barcode": "", 
         "category": "Syry",
         "subcategory": "Mozzarella",
         "subsubcategory": "",
@@ -24,7 +24,7 @@ const groups = [
 ]
 
 const products =  [{
-    "id": "0135354",
+    "id": "101",
     "name": "Mozzarella Galbani", 
     "brand": "Galbani",
     "package_size": 125,
@@ -39,7 +39,7 @@ const products =  [{
         "Tesco": 27.90,
         "Globus": 31.90
     }},{
-    "id": "0135754",
+    "id": "102",
     "name": "Clever Mozzarella", 
     "brand": "Clever",
     "package_size": 125,
@@ -48,7 +48,7 @@ const products =  [{
     "category": "Syry", 
     "subcategory": "Mozzarella",
     "subsubcategory": "",
-    "parents": [{name: "Mozarella"}], 
+    "parents": [{name: "Mozzarella"}], 
     "costs":{
         "Tesco": 24.9,
     }    
@@ -62,16 +62,16 @@ const productGroups = [{name: "Mozarella"}, {name: "Slanina"}, {name: "Okurka"}]
 
 
 async function run(){
-    models.product.destroy({where: {barcode: null}});
-    models.product.destroy({where: {type: "P"}});
+    //models.product.destroy({where: {barcode: null}});
+    //models.product.destroy({where: {type: "P"}});
+    //models.product.sync({ force: true });
 
+    /*for (const productToAdd of groups){
+        findOrCreateGroup(productToAdd);
+    }*/
 
     for (const productToAdd of products){
         addConcreteProduct(productToAdd);
-    }
-
-    for (const productToAdd of products){
-        addPro(productToAdd);
     }
 }
 
