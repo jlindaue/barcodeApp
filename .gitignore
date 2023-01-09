@@ -31,4 +31,5 @@ yarn-debug.log*
 yarn-error.log*
 
 /server/database_mongo
+/server/clientBuild/*
 

@@ -15,16 +15,16 @@ var _shopping_list_item = require("./shopping_list_item");
 var _synonym = require("./synonym");
 
 function initModels(sequelize) {
+  var shop = _shop(sequelize, DataTypes);
+  var membership = _membership(sequelize, DataTypes);
   var category = _category(sequelize, DataTypes);
   var client = _client(sequelize, DataTypes);
   var client_memberships = _client_memberships(sequelize, DataTypes);
   var client_shops = _client_shops(sequelize, DataTypes);
-  var membership = _membership(sequelize, DataTypes);
   var note = _note(sequelize, DataTypes);
-  var offer = _offer(sequelize, DataTypes);
   var product = _product(sequelize, DataTypes);
+  var offer = _offer(sequelize, DataTypes);
   var products_relations = _products_relations(sequelize, DataTypes);
-  var shop = _shop(sequelize, DataTypes);
   var shopping = _shopping(sequelize, DataTypes);
   var shopping_item = _shopping_item(sequelize, DataTypes);
   var shopping_list_item = _shopping_list_item(sequelize, DataTypes);
