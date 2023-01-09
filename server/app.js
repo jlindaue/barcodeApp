@@ -4,13 +4,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+const dotenv = require('dotenv').config()
+const userRoutes = require('./userHandling/userRouter')
 
 var productsRouter = require('./routes/products');
 var groupsRouter = require('./routes/groups');
 var categoriesRouter = require('./routes/categories');
 
 var app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
+app.use(userRoutes)
 
 app.use(productsRouter);
 app.use(groupsRouter);
