@@ -5,8 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 //var cors = require('cors');
 const dotenv = require('dotenv').config()
-const userRoutes = require('./userHandling/userRouter')
 
+const userRoutes = require('./userHandling/userRouter')
 var productsRouter = require('./routes/products');
 var groupsRouter = require('./routes/groups');
 var categoriesRouter = require('./routes/categories');

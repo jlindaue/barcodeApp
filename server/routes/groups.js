@@ -12,7 +12,7 @@ router.get('/productGroups', async (req,res)=>{
             limit: 5,
             type: ProductType.GROUP,
             attributes: ["id", "name"],
-            where: { name: { [Sequelize.Op.iLike]: query.toLowerCase() + '%' }}
+            where: { name: { [Sequelize.Op.iLike]: query.toLowerCase() + '%' }, type: ProductType.GROUP}
         })
     }else{
         results = await models.product.findAll({

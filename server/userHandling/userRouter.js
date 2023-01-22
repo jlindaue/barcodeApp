@@ -25,7 +25,7 @@ router.use(async(req,res,next)=>{
     console.log(decoded)
     let user = await Client.findOne({where:{id : decoded.id},attributes:{exclude:["password"]}});
     if(user === null){
-        res.status(404).json({'msg':"User not found"});
+        res.status(401).json({'msg':"User not found"});
     }
     next();
   } catch(err){

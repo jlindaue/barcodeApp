@@ -3,7 +3,7 @@ const router = express.Router();
 const models = require('../database/models.js');
 const Sequelize = require('sequelize');
 const {addConcreteProduct} = require('../dao/products.js')
-
+const {ProductType} = require('../enums.js');
 
 const productSequelizeQuery = {
     model: models.product, 
@@ -53,7 +53,7 @@ function productToDTO(r) {
 }
 
 
-router.get('/product/:product', async (req,res)=>{
+router.get('/products/:product', async (req,res)=>{
     if (!req?.params?.product) return;
     const product = await models.product.findByPk(req.params.product, productSequelizeQuery);
 	if (product) {
@@ -63,34 +63,37 @@ router.get('/product/:product', async (req,res)=>{
 	}
 })
 
-router.get('/product', async (req,res)=>{
-    if (!req?.query?.barcode) return;
-    const barcode = req.query.barcode;
-    const result = await models.product.findOne({
-        ...productSequelizeQuery,
-        where: { barcode: barcode}
-    });
-    if (result) {
-		res.status(200).json(productToDTO(result));
-	} else {
-		res.status(404).send('404 - Not found');
-	}
-})
-
 router.get('/products', async (req,res)=>{
     console.log(req.query);
     let results;
 
+    //concrete product by barcode
+    if (req?.query?.barcode){
+        const barcode = req.query.barcode;
+        const result = await models.product.findOne({
+            ...productSequelizeQuery,
+            where: { barcode: barcode}
+        });
+        if (result) {
+            res.status(200).json(productToDTO(result));
+        } else {
+            res.status(404).send('404 - Not found');
+        }
+        return;
+    }
+    
+    //search
     if (req?.query?.q){
         const query = req?.query?.q;
         results = await models.product.findAll({
             ...productSequelizeQuery,
             limit: 5,
-            where: { name: { [Sequelize.Op.iLike]: query.toLowerCase() + '%' }},
+            where: { name: { [Sequelize.Op.iLike]: query.toLowerCase() + '%' }, type: ProductType.CONCRETE},
           });
     }else{
         results = await models.product.findAll({
-            limit: 5
+            limit: 5,
+            where: {type: ProductType.CONCRETE}
         });
     }
 

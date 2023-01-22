@@ -35,7 +35,7 @@ const signup = async (req, res) => {
      console.log("user", JSON.stringify(user, null, 2));
      console.log(token);
      //send users details
-     return res.status(201).send(user);
+     return res.status(201).end();
    } else {
      return res.status(409).send("Details are not correct");
    }
@@ -64,16 +64,16 @@ const { email, password } = req.body;
 
      if (isSame) {
        let token = jwt.sign({ id: user.id }, process.env.SECRET, {
-         expiresIn: 1 * 24 * 60 * 60 * 1000,
+         expiresIn: "24h",
        });
 
        //if password matches wit the one in the database
        //go ahead and generate a cookie for the user
-       res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
+       res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true });
        console.log("user", JSON.stringify(user, null, 2));
        console.log(token);
        //send user data
-       return res.status(201).send(user);
+       return res.status(201).end();
      } else {
        return res.status(401).send("Authentication failed");
      }

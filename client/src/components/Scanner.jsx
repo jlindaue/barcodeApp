@@ -85,7 +85,7 @@ export default function Scanner(props){
     async function loadFromDB(e){
         e.preventDefault();
         try{
-            const response = await fetch(`${BACKEND_URL}/product?barcode=${barcode}`);
+            const response = await fetch(`${BACKEND_URL}/products?barcode=${barcode}`);
             if (response.status > 299){
                 props.onEnteredBarcode(barcode);
             }else{
